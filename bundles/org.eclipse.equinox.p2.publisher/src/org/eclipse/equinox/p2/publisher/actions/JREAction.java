@@ -111,8 +111,12 @@ public class JREAction extends AbstractPublisherAction {
 		if (profileProperties == null)
 			return new IProvidedCapability[0];
 
+		String packages = profileProperties.get(PROFILE_SYSTEM_PACKAGES);
+		if (packages == null || "".equals(packages.trim())) //$NON-NLS-1$
+			return new IProvidedCapability[] {PublisherHelper.createSelfCapability(id, version)};
+
 		try {
-			ManifestElement[] jrePackages = ManifestElement.parseHeader(PROFILE_SYSTEM_PACKAGES, profileProperties.get(PROFILE_SYSTEM_PACKAGES));
+			ManifestElement[] jrePackages = ManifestElement.parseHeader(PROFILE_SYSTEM_PACKAGES, packages);
 			IProvidedCapability[] exportedPackageAsCapabilities = new IProvidedCapability[jrePackages.length + 1];
 			exportedPackageAsCapabilities[0] = PublisherHelper.createSelfCapability(id, version);
 			for (int i = 1; i <= jrePackages.length; i++) {
